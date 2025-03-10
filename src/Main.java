@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -7,7 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        int choice;
+        int choice = -1;
         ArrayList<Task> taskList = new ArrayList<>();
 
         do{
@@ -21,8 +22,13 @@ public class Main {
             System.out.println("0: Exit");
             System.out.print("Choose an option (0-4): ");
 
-            choice = scanner.nextInt();
-            scanner.nextLine();
+            try{
+                choice = scanner.nextInt();
+                scanner.nextLine();
+            } catch (InputMismatchException e) {
+                scanner.nextLine();
+                choice = -1;
+            }
 
             switch (choice){
                 case 1 -> addTask(taskList);
@@ -30,7 +36,11 @@ public class Main {
                 case 3 -> completeTask(taskList);
                 case 4 -> removeTask(taskList);
                 case 0 -> System.out.println("Exiting...");
-                default -> System.out.println("Type a number between 0-4...");
+                default -> {
+                    System.out.println();
+                    System.out.println("Type a NUMBER between 0-4...");
+                    System.out.println();
+                }
             }
         } while (choice != 0);
     }
@@ -46,49 +56,67 @@ public class Main {
         System.out.print("Type the description of the task: ");
         description = scanner.nextLine();
 
-        //Task newTask = new Task(name, description, false);
         taskList.add(new Task(name, description, false));
         System.out.println();
     }
 
     static void showTasks(ArrayList<Task> task) {
-        System.out.println();
-        System.out.println("ToDo List:");
-        for(int i = 0; i < task.size(); i++) {
-            String status = task.get(i).getCompletion() ? "✔ Completa" : "❌ Pendente";
-            System.out.printf("%d- %s (%s) %s\n",
-                    i+1,
-                    task.get(i).getName(),
-                    task.get(i).getDescription(),
-                    status);
+
+        if(task.isEmpty()){
+            System.out.println();
+            System.out.println("There isn't any taks yet");
+            System.out.println();
+        } else {
+            System.out.println();
+            System.out.println("ToDo List:");
+            for(int i = 0; i < task.size(); i++) {
+                String status = task.get(i).getCompletion() ? "✔ Completa" : "❌ Pendente";
+                System.out.printf("%d- %s (%s) %s\n",
+                        i+1,
+                        task.get(i).getName(),
+                        task.get(i).getDescription(),
+                        status);
+            }
+            System.out.println();
         }
-        System.out.println();
     }
 
     static void completeTask(ArrayList<Task> task) {
 
         int taskOption;
 
-        showTasks(task);
-        System.out.printf("Select which task to mark as complete: (1-%d) ", task.size());
-        taskOption = scanner.nextInt() -1;
-        scanner.nextLine();
+        if(task.isEmpty()){
+            System.out.println();
+            System.out.println("There isn't any taks yet");
+            System.out.println();
+        } else {
+            showTasks(task);
+            System.out.printf("Select which task to mark as complete: (1-%d) ", task.size());
+            taskOption = scanner.nextInt() -1;
+            scanner.nextLine();
 
-        task.get(taskOption).setCompletion(!task.get(taskOption).getCompletion());
+            task.get(taskOption).setCompletion(!task.get(taskOption).getCompletion());
 
-        showTasks(task);
+            showTasks(task);
+        }
     }
 
     static void removeTask(ArrayList<Task> task) {
         int taskOption;
 
-        showTasks(task);
-        System.out.printf("Select which task to remove: (1-%d) ", task.size());
-        taskOption = scanner.nextInt();
-        scanner.nextLine();
+        if(task.isEmpty()){
+            System.out.println();
+            System.out.println("There isn't any taks yet");
+            System.out.println();
+        } else {
+            showTasks(task);
+            System.out.printf("Select which task to remove: (1-%d) ", task.size());
+            taskOption = scanner.nextInt();
+            scanner.nextLine();
 
-        task.remove(taskOption);
+            task.remove(taskOption);
 
-        showTasks(task);
+            showTasks(task);
+        }
     }
 }
